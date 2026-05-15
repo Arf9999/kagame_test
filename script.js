@@ -7,6 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let isTLDR = false;
     const toggleViewBtn = document.getElementById('toggle-view-btn');
 
+    function parseMarkdown(text) {
+        if (!text) return '';
+        // Basic bold
+        let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Basic italics
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        // Simple links
+        html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+        return html;
+    }
+
     function render() {
         if (isTLDR) {
             renderTLDR();
@@ -32,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTLDR() {
         if (typeof tldrData !== 'undefined') {
             let html = `<h2>TL;DR Summary</h2>`;
-            html += `<p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem;">${tldrData.high_level_summary}</p>`;
+            html += `<p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem;">${parseMarkdown(tldrData.high_level_summary)}</p>`;
             
             tldrData.narratives.forEach(n => {
                 html += `
@@ -42,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="badge" title="Traditional Media mentions" style="background: var(--accent-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">TM: ${n.tm_freq}</span>
                             <span class="badge" title="Social Media mentions" style="background: #10b981; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-left: 0.5rem;">SM: ${n.sm_freq}</span>
                         </p>
-                        <p>${n.summary}</p>
+                        <p>${parseMarkdown(n.summary)}</p>
                         <div style="margin-top: 1rem;">
                             <p style="margin-bottom: 0.5rem;"><strong>Top Entities:</strong></p>
                             <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
